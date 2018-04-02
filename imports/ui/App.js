@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { withTracker } from 'meteor/react-meteor-data';
+import AccountsUIWrapper from './AccountsUIWrapper.js';
 import Project from './Project.js';
+
 
 import { Projects } from '../api/Projects.js';
 
@@ -22,6 +24,8 @@ class App extends Component {
         Projects.insert({
           text,
           createdAt: new Date(), // current time
+          owner: Meteor.userId(),
+          username: Meteor.user().username,
         });
      
         // Clear form
@@ -45,32 +49,35 @@ class App extends Component {
     render() {
         return (
             <div className="container">
-            <header>
-                <h1>ProjectManager ({this.props.uncompletedProjects} Uncompleted)</h1>
-            <label className="hide-completed">
-                <input
-                    type="checkbox"
-                    readOnly
-                    checked={this.state.hideCompleted}
-                    onClick={this.toggleHideCompleted.bind(this)}
-                />
-                Hide Completed Tasks
-            </label>
-                <form className="new-project" onSubmit={this.handleSubmit.bind(this)} >
-                    <input
-                    type="text"
-                    ref="textInput"
-                    placeholder="Type to add new projects"
-                    />
-                    <input 
-                    type="submit"
-                    placeholder="Submit"
-                    />
-                </form>
-            </header>
-            <ul>
-                {this.renderProjects()}
-            </ul>
+                <header>
+                    <h1>ProjectManager ({this.props.uncompletedProjects} Uncompleted)</h1>
+                    <label className="hide-completed">
+                        <input
+                            type="checkbox"
+                            readOnly
+                            checked={this.state.hideCompleted}
+                            onClick={this.toggleHideCompleted.bind(this)}
+                        />
+                        Hide Completed Tasks
+                    </label>
+                        <AccountsUIWrapper />
+                        { this.props.currentUser ?
+                            <form className="new-project" onSubmit={this.handleSubmit.bind(this)} >
+                                <input
+                                type="text"
+                                ref="textInput"
+                                placeholder="Type to add new projects"
+                                />
+                                <input 
+                                type="submit"
+                                placeholder="Submit"
+                                />
+                            </form>: ''
+                        }
+                </header>
+                <ul>
+                    {this.renderProjects()}
+                </ul>
             </div>
         );
     }
@@ -79,7 +86,8 @@ class App extends Component {
 export default withTracker(() => {
     return {
       projects: Projects.find({}, { sort: { createdAt: 1 } }).fetch(),
-      uncompletedProjects: Projects.find({ checked: { $ne: true } }).count()
+      uncompletedProjects: Projects.find({ checked: { $ne: true } }).count(),
+      currentUser: Meteor.user(),
     };
   })(App);
   

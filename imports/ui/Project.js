@@ -23,7 +23,9 @@ class Project extends Component {
           checked={this.props.project.checked}
           onClick={this.tickChecked.bind(this)}
       />
-      <span className="text">{this.props.project.text}</span>
+      <span className="text">
+        <strong>{this.props.project.username}</strong>: {this.props.project.text}
+      </span>
       </li>
     );
   }
