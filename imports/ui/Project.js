@@ -3,12 +3,10 @@ import { Projects } from '../api/Projects.js';
 // Task component - represents a single todo item
 class Project extends Component {
   tickChecked(){
-    Projects.update(this.props.project._id,{
-      $set: { checked: !this.props.project.checked }
-    });
+    Meteor.call('projects.setChecked', this.props.project._id, !this.props.project.checked);
   }
   deleteThisProject() {
-    Projects.remove(this.props.project._id);
+    Meteor.call('projects.remove', this.props.project._id);
   }
   render() {
     const taskClassName = this.props.project.checked ? 'checked' : '';

@@ -21,13 +21,7 @@ class App extends Component {
         // Find the text field via the React ref
         const text = ReactDOM.findDOMNode(this.refs.textInput).value.trim();
      
-        Projects.insert({
-          text,
-          createdAt: new Date(), // current time
-          owner: Meteor.userId(),
-          username: Meteor.user().username,
-        });
-     
+        Meteor.call('projects.insert', text);
         // Clear form
         ReactDOM.findDOMNode(this.refs.textInput).value = '';
     }
