@@ -35,7 +35,7 @@ Meteor.methods({
     'projects.remove'(projectId) {
         check(projectId, String);
 
-        const project = Projects.findOne(taskId);
+        const project = Projects.findOne(projectId);
         if (project.private && project.owner !== this.userId) {
             throw new Meteor.Error('not-authorized');
         }
@@ -47,7 +47,7 @@ Meteor.methods({
         check(projectId,String);
         check(setChecked,Boolean);
         
-        const project = Projects.findOne(taskId);
+        const project = Projects.findOne(projectId);
         if (project.private && project.owner !== this.userId) {
             throw new Meteor.Error('not-authorized');
         }

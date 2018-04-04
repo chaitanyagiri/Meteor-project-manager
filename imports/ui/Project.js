@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Projects } from '../api/Projects.js';
 import classnames from 'classnames';
-// Task component - represents a single todo item
+// project component - represents a single todo item
 class Project extends Component {
   tickChecked(){
     Meteor.call('projects.setChecked', this.props.project._id, !this.props.project.checked);
@@ -14,29 +14,29 @@ class Project extends Component {
   }
 
   render() {
-    const taskClassName = classnames({
-      checked: this.props.task.checked,
-      private: this.props.task.private,
+    const projectClassName = classnames({
+      checked: this.props.project.checked,
+      private: this.props.project.private,
     });
     return (
-      <li className={taskClassName}>
-      <button className="delete" onClick={this.deleteThisProject.bind(this)}>
-          &times;
-      </button>
-      <input
-          type="checkbox"
-          readOnly
-          checked={this.props.project.checked}
-          onClick={this.tickChecked.bind(this)}
-      />
-      { this.props.showPrivateButton ? (
-          <button className="toggle-private" onClick={this.togglePrivate.bind(this)}>
-            { this.props.task.private ? 'Private' : 'Public' }
-          </button>
-      ) : ''}
-      <span className="text">
-        <strong>{this.props.project.username}</strong>: {this.props.project.text}
-      </span>
+      <li className={projectClassName}>
+        <button className="delete" onClick={this.deleteThisProject.bind(this)}>
+            &times;
+        </button>
+        <input
+            type="checkbox"
+            readOnly
+            checked={this.props.project.checked}
+            onClick={this.tickChecked.bind(this)}
+        />
+        { this.props.showPrivateButton ? (
+            <button className="toggle-private" onClick={this.togglePrivate.bind(this)}>
+              { this.props.project.private ? 'Private' : 'Public' }
+            </button>
+        ) : ''}
+        <span className="text">
+          <strong>{this.props.project.username}</strong>: {this.props.project.text}
+        </span>
       </li>
     );
   }

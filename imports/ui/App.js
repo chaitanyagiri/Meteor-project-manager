@@ -35,17 +35,15 @@ class App extends Component {
         let filteredProjects = this.props.projects;
         if (this.state.hideCompleted) {
             filteredProjects = filteredProjects.filter(project => !project.checked);
-        }
-        const currentUserId = this.props.currentUser && this.props.currentUser._id;
-        const showPrivateButton = project.owner === currentUserId;
+        }    
+            return filteredProjects.map((project) => {
+                const currentUserId = this.props.currentUser && this.props.currentUser._id;
+                const showPrivateButton = project.owner === currentUserId;
+                return(
+                <Project key={project._id} project={project} showPrivateButton={showPrivateButton}/>
+                );
+            });
         
-        return filteredProjects.map((project) => {
-            const currentUserId = this.props.currentUser && this.props.currentUser._id;
-            const showPrivateButton = project.owner === currentUserId;
-            return(
-            <Project key={project._id} project={project} showPrivateButton={showPrivateButton}/>
-            );
-        });
     }
     render() {
         return (
@@ -59,7 +57,7 @@ class App extends Component {
                             checked={this.state.hideCompleted}
                             onClick={this.toggleHideCompleted.bind(this)}
                         />
-                        Hide Completed Tasks
+                        Hide Completed Projects
                     </label>
                         <AccountsUIWrapper />
                         { this.props.currentUser ?
@@ -68,6 +66,7 @@ class App extends Component {
                                 type="text"
                                 ref="textInput"
                                 placeholder="Type to add new projects"
+                                required
                                 />
                                 <input 
                                 type="submit"
