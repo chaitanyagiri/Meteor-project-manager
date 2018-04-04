@@ -36,9 +36,16 @@ class App extends Component {
         if (this.state.hideCompleted) {
             filteredProjects = filteredProjects.filter(project => !project.checked);
         }
-        return filteredProjects.map((project) => (
-            <Project key={project._id} project={project} />
-        ));
+        const currentUserId = this.props.currentUser && this.props.currentUser._id;
+        const showPrivateButton = project.owner === currentUserId;
+        
+        return filteredProjects.map((project) => {
+            const currentUserId = this.props.currentUser && this.props.currentUser._id;
+            const showPrivateButton = project.owner === currentUserId;
+            return(
+            <Project key={project._id} project={project} showPrivateButton={showPrivateButton}/>
+            );
+        });
     }
     render() {
         return (
@@ -78,6 +85,7 @@ class App extends Component {
 }
 
 export default withTracker(() => {
+    Meteor.subscribe('projects');
     return {
       projects: Projects.find({}, { sort: { createdAt: 1 } }).fetch(),
       uncompletedProjects: Projects.find({ checked: { $ne: true } }).count(),

@@ -4,6 +4,17 @@ import { check } from 'meteor/check';
 
 export const Projects = new Mongo.Collection('Projects');
 
+if (Meteor.isServer) {
+    Meteor.publish('projects', function projectsPublication() {
+        return Projects.find({
+            $or: [
+                    { private: { $ne: true } },
+                    { owner: this.userId },
+                ],
+        });
+    });
+}
+
 Meteor.methods({
     'projects.insert'(text) {
         check(text, String);
@@ -23,6 +34,12 @@ Meteor.methods({
     
     'projects.remove'(projectId) {
         check(projectId, String);
+
+        const project = Projects.findOne(taskId);
+        if (project.private && project.owner !== this.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
         Projects.remove(projectId);
     },
 
@@ -30,8 +47,24 @@ Meteor.methods({
         check(projectId,String);
         check(setChecked,Boolean);
         
+        const project = Projects.findOne(taskId);
+        if (project.private && project.owner !== this.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+
         Projects.update(projectId,{
             $set: { checked: setChecked }
         });
-    }
+    },
+    'projects.setPrivate'(projectId, setToPrivate) {
+        check(projectId, String);
+        check(setToPrivate, Boolean);
+        
+        const project = Projects.findOne(projectId);
+        if (project.owner !== this.userId) {
+            throw new Meteor.Error('not-authorized');
+        }
+        Projects.update(projectId, { $set: { private: setToPrivate } });
+        
+    },
 });
